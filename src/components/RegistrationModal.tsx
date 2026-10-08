@@ -21,7 +21,7 @@ export default function RegistrationModal({ isOpen, onClose, defaultCategory = '
   const [email, setEmail] = useState('');
   const [company, setCompany] = useState('');
   const [jobTitle, setJobTitle] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('mpesa');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('airtel');
   const [paymentReference, setPaymentReference] = useState('');
   const [photoPreview, setPhotoPreview] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -307,12 +307,10 @@ export default function RegistrationModal({ isOpen, onClose, defaultCategory = '
                 4. Mode de Règlement ({currentTier.price} USD)
               </label>
 
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center text-xs">
+              <div className="grid grid-cols-2 gap-2 text-center text-xs">
                 {[
-                  { id: 'mpesa', label: 'Vodacom M-Pesa' },
                   { id: 'airtel', label: 'Airtel Money' },
-                  { id: 'orange', label: 'Orange Money' },
-                  { id: 'cash', label: 'Espèces / Banque' },
+                  { id: 'cash', label: 'Paiement en présentiel' },
                 ].map((m) => (
                   <button
                     key={m.id}
@@ -331,10 +329,8 @@ export default function RegistrationModal({ isOpen, onClose, defaultCategory = '
 
               <div className="p-3.5 bg-[#101112] border border-white/10 rounded text-xs space-y-1">
                 <p className="registration-payment-instructions text-white/90">
-                  {paymentMethod === 'mpesa' && 'Transférez au numéro officiel : +243 997 173 630.'}
-                  {paymentMethod === 'airtel' && 'Transférer au Airtel Money : +243 99 000 0000 (Dîner des Entrepreneurs).'}
-                  {paymentMethod === 'orange' && 'Transférer au Orange Money : +243 89 000 0000 (Dîner des Entrepreneurs).'}
-                  {paymentMethod === 'cash' && 'Règlement en espèces auprès du secrétariat ou par virement bancaire.'}
+                  {paymentMethod === 'airtel' && 'Transférez au numéro Airtel Money officiel : +243 997 173 630.'}
+                  {paymentMethod === 'cash' && 'Règlement en présentiel auprès du secrétariat.'}
                 </p>
                 <div className="pt-2">
                   <input

@@ -57,7 +57,7 @@ export default function PricingSection({ onSelectCategory }: PricingSectionProps
             Tarifs de Participation.
           </h2>
           <p className="text-base text-white/70 font-light">
-            Règlement simplifié en Mobile Money (Vodacom M-Pesa, Airtel Money, Orange Money) ou en espèces.
+            Paiement par Airtel Money ou en présentiel auprès du secrétariat.
           </p>
         </div>
 

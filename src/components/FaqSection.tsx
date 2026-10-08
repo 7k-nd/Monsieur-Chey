@@ -7,7 +7,7 @@ export default function FaqSection() {
   const faqs = [
     {
       q: 'Comment s\u2019effectue le paiement de mon billet ?',
-      a: 'Vous pouvez payer facilement via Mobile Money en RDC (Vodacom M-Pesa, Airtel Money, Orange Money), en espèces auprès du comité d\u2019organisation, ou par virement bancaire. Une fois votre référence transmise ou votre versement effectué, votre billet QR officiel est validé instantanément.',
+      a: 'Vous pouvez régler par Airtel Money au numéro officiel indiqué lors de l’inscription, ou payer en présentiel auprès du secrétariat. Après vérification de votre paiement par l’équipe, votre billet QR officiel sera validé.',
     },
     {
       q: 'Comment récupérer mon billet une fois inscrit ?',
