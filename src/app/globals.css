@@ -563,6 +563,10 @@ header:not(.nav-scrolled) a:hover,
   color: #64748b !important;
 }
 
+.light-mode header.nav-scrolled .brand-logo {
+  filter: brightness(0) saturate(100%);
+}
+
 /* Footer in Light Mode */
 .light-mode footer {
   background-color: #0f172a !important;

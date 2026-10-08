@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowUp, Ticket, Shield } from 'lucide-react';
 import { createWhatsAppUrl, WHATSAPP_CONTACT_NUMBER } from '@/lib/whatsapp';
 
@@ -21,9 +22,13 @@ export default function Footer() {
           
           {/* Col 1: Brand */}
           <div className="lg:col-span-5 space-y-4">
-            <span className="font-serif text-2xl font-bold text-white block">
-              Mr Chey<span className="text-[#eabe7c]">.</span>
-            </span>
+            <Image
+              src="/logo.png"
+              alt="Logo Mr Chey"
+              width={96}
+              height={96}
+              className="h-12 w-12 object-contain"
+            />
             <p className="text-xs text-white/60 leading-relaxed font-light max-w-sm">
               Le Dîner des Entrepreneurs est l&apos;initiative de référence pour dynamiser les partenariats d&apos;affaires et l&apos;investissement à Lubumbashi et dans le grand Katanga.
             </p>

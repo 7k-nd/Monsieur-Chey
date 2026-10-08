@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState, useRef } from 'react';
+import Image from 'next/image';
 import { Attendee } from '@/types';
 import { Printer, Share2, Lock, CheckCircle2, Clock, MessageCircle, AlertTriangle } from 'lucide-react';
 import { openWhatsApp, WHATSAPP_CONTACT_NUMBER } from '@/lib/whatsapp';
@@ -81,7 +82,13 @@ export default function TicketCard({ attendee }: TicketCardProps) {
       >
         {/* Header */}
         <div className="p-6 text-center border-b border-white/10 bg-[#1c1d1e]/50">
-          <h2 className="text-[#eabe7c] font-serif text-xl tracking-widest uppercase mb-1">Mr Chey.</h2>
+          <Image
+            src="/logo.png"
+            alt="Logo Mr Chey"
+            width={96}
+            height={96}
+            className="h-12 w-12 object-contain mx-auto mb-1"
+          />
           <p className="text-white/80 text-xs tracking-widest uppercase">Le Dîner des Entrepreneurs • Lubumbashi</p>
         </div>
 

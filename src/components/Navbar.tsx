@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Menu, X, Ticket, Sun, Moon } from 'lucide-react';
 import { getMyLastTicketToken } from '@/lib/storage';
 
@@ -46,10 +47,15 @@ export default function Navbar({ onOpenRegister, theme = 'light', onToggleTheme 
       <div className="max-w-7xl mx-auto px-6 sm:px-10 flex items-center justify-between">
         
         {/* Brand */}
-        <Link href="/" className="flex items-baseline gap-2 group">
-          <span className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-white group-hover:text-[#eabe7c] transition-colors">
-            Mr Chey<span className="text-[#eabe7c]">.</span>
-          </span>
+        <Link href="/" className="flex items-center gap-2 group" aria-label="Mr Chey - Accueil">
+          <Image
+            src="/logo.png"
+            alt="Logo Mr Chey"
+            width={96}
+            height={96}
+            className="brand-logo h-12 w-12 object-contain"
+            priority
+          />
           <span className="hidden sm:inline-block text-[9px] uppercase tracking-[0.25em] text-white/50 font-medium">
             Dîner des Entrepreneurs
           </span>
