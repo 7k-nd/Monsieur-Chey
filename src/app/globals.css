@@ -612,6 +612,12 @@ header:not(.nav-scrolled) a:hover,
   border-color: rgba(0, 0, 0, 0.08) !important;
 }
 
+/* Keep translucent black badges dark so their white text stays legible. */
+.light-mode [class*="bg-black/"] {
+  background-color: rgba(15, 23, 42, 0.9) !important;
+  border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
 .light-mode .border-l.border-white\/15 {
   border-color: rgba(0, 0, 0, 0.1) !important;
 }
@@ -657,4 +663,3 @@ header:not(.nav-scrolled) a:hover,
     display: none !important;
   }
 }
-
