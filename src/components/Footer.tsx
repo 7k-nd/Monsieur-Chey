@@ -27,7 +27,7 @@ export default function Footer() {
               alt="Logo Mr Chey"
               width={96}
               height={96}
-              className="h-12 w-12 object-contain"
+              className="h-16 w-16 object-contain"
             />
             <p className="text-xs text-white/60 leading-relaxed font-light max-w-sm">
               Le Dîner des Entrepreneurs est l&apos;initiative de référence pour dynamiser les partenariats d&apos;affaires et l&apos;investissement à Lubumbashi et dans le grand Katanga.

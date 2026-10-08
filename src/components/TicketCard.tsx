@@ -87,7 +87,7 @@ export default function TicketCard({ attendee }: TicketCardProps) {
             alt="Logo Mr Chey"
             width={96}
             height={96}
-            className="h-12 w-12 object-contain mx-auto mb-1"
+            className="h-16 w-16 object-contain mx-auto mb-1"
           />
           <p className="text-white/80 text-xs tracking-widest uppercase">Le Dîner des Entrepreneurs • Lubumbashi</p>
         </div>

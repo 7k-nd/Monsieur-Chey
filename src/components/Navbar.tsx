@@ -53,7 +53,7 @@ export default function Navbar({ onOpenRegister, theme = 'light', onToggleTheme 
             alt="Logo Mr Chey"
             width={96}
             height={96}
-            className="brand-logo h-12 w-12 object-contain"
+            className="brand-logo h-14 w-14 object-contain sm:h-16 sm:w-16"
             priority
           />
           <span className="hidden sm:inline-block text-[9px] uppercase tracking-[0.25em] text-white/50 font-medium">
