@@ -330,8 +330,8 @@ export default function RegistrationModal({ isOpen, onClose, defaultCategory = '
               </div>
 
               <div className="p-3.5 bg-[#101112] border border-white/10 rounded text-xs space-y-1">
-                <p className="text-white/80">
-                  {paymentMethod === 'mpesa' && 'Transférer au M-Pesa officiel : +243 81 000 0000 (Dîner des Entrepreneurs).'}
+                <p className="registration-payment-instructions text-white/90">
+                  {paymentMethod === 'mpesa' && 'Transférez au numéro officiel : +243 997 173 630.'}
                   {paymentMethod === 'airtel' && 'Transférer au Airtel Money : +243 99 000 0000 (Dîner des Entrepreneurs).'}
                   {paymentMethod === 'orange' && 'Transférer au Orange Money : +243 89 000 0000 (Dîner des Entrepreneurs).'}
                   {paymentMethod === 'cash' && 'Règlement en espèces auprès du secrétariat ou par virement bancaire.'}

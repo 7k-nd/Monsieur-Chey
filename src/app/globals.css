@@ -515,6 +515,10 @@ header:not(.nav-scrolled) a:hover,
   color: #475569 !important;
 }
 
+.light-mode .registration-payment-instructions {
+  color: #f8fafc !important;
+}
+
 .light-mode .border-white\/10,
 .light-mode .border-white\/15,
 .light-mode .border-white\/20,
