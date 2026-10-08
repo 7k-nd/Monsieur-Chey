@@ -92,7 +92,11 @@ export default function RegistrationModal({ isOpen, onClose, defaultCategory = '
       }
     } catch (err) {
       console.error('Registration error', err);
-      alert("Une erreur s'est produite lors de l'enregistrement.");
+      alert(
+        err instanceof Error
+          ? err.message
+          : "Une erreur s'est produite lors de l'enregistrement dans Supabase."
+      );
     } finally {
       setIsSubmitting(false);
     }

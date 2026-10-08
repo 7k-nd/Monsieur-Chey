@@ -3,12 +3,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import {
-  getStoredAttendees,
   getStoredAttendeesAsync,
-  saveAttendees,
   updateAttendeeAsync,
   deleteAttendeeAsync,
-  registerAttendee,
   registerAttendeeAsync,
   getStoredAdminPin,
   setStoredAdminPin,
@@ -16,7 +13,7 @@ import {
 } from '@/lib/storage';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import {
-  getLocalSettings,
+  getDefaultSettings,
   fetchRemoteSettings,
   updateMrCheyPhoto,
   savePartners,
@@ -64,6 +61,7 @@ export default function AdminPage() {
 
   // Attendees state
   const [attendees, setAttendees] = useState<Attendee[]>([]);
+  const [connectionError, setConnectionError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
@@ -91,7 +89,7 @@ export default function AdminPage() {
 
   // Event Settings State (Mr Chey photo & Partners)
   const [mrCheyPhotoInput, setMrCheyPhotoInput] = useState(DEFAULT_MR_CHEY_PHOTO);
-  const [partners, setPartners] = useState<Partner[]>([]);
+  const [partners, setPartners] = useState<Partner[]>(getDefaultSettings().partners);
   const [showAddPartnerModal, setShowAddPartnerModal] = useState(false);
   const [newPartnerName, setNewPartnerName] = useState('');
   const [newPartnerCategory, setNewPartnerCategory] = useState('Partenaire Officiel');
@@ -101,25 +99,39 @@ export default function AdminPage() {
   const menuRef = useRef<HTMLDivElement>(null);
 
   const loadAttendees = async () => {
-    const list = await getStoredAttendeesAsync();
-    setAttendees(list);
+    try {
+      const list = await getStoredAttendeesAsync();
+      setAttendees(list);
+      setConnectionError('');
+      return true;
+    } catch (error) {
+      setAttendees([]);
+      setConnectionError(error instanceof Error ? error.message : 'Impossible de charger les invités depuis Supabase.');
+      return false;
+    }
   };
 
   const loadSettings = async () => {
-    const s = getLocalSettings();
-    setMrCheyPhotoInput(s.mrCheyPhoto);
-    setPartners(s.partners);
-    const remote = await fetchRemoteSettings();
-    setMrCheyPhotoInput(remote.mrCheyPhoto);
-    setPartners(remote.partners);
+    try {
+      const settings = await fetchRemoteSettings();
+      setMrCheyPhotoInput(settings.mrCheyPhoto);
+      setPartners(settings.partners);
+    } catch (error) {
+      setConnectionError(error instanceof Error ? error.message : 'Impossible de charger les paramètres du site.');
+    }
   };
 
   useEffect(() => {
     const authSession = sessionStorage.getItem('diner_admin_auth');
     if (authSession === 'true') {
-      setIsAuthenticated(true);
-      loadAttendees();
-      loadSettings();
+      void loadAttendees().then((isConnected) => {
+        if (isConnected) {
+          setIsAuthenticated(true);
+          void loadSettings();
+        } else {
+          sessionStorage.removeItem('diner_admin_auth');
+        }
+      });
     }
 
     ensureDefaultPins();
@@ -161,7 +173,7 @@ export default function AdminPage() {
   // Supabase real-time sync for admin
   useEffect(() => {
     if (!isAuthenticated) return;
-    loadAttendees();
+    void loadAttendees();
 
     const client = supabase;
     if (client) {
@@ -210,15 +222,15 @@ export default function AdminPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     const correctPin = getStoredAdminPin();
     if (pinInput.trim() === correctPin) {
+      if (!(await loadAttendees())) return;
       setIsAuthenticated(true);
       sessionStorage.setItem('diner_admin_auth', 'true');
       setPinError(false);
-      loadAttendees();
-      loadSettings();
+      void loadSettings();
     } else {
       setPinError(true);
     }
@@ -226,34 +238,53 @@ export default function AdminPage() {
 
   const handleStatusChange = async (id: string, newStatus: PaymentStatus) => {
     setActiveMenuId(null);
-    await updateAttendeeAsync(id, { paymentStatus: newStatus });
-    loadAttendees();
+    try {
+      const updated = await updateAttendeeAsync(id, { paymentStatus: newStatus });
+      if (!updated) throw new Error('Invité introuvable dans Supabase.');
+      await loadAttendees();
+    } catch (error) {
+      setConnectionError(error instanceof Error ? error.message : 'Impossible de modifier le statut du paiement.');
+    }
   };
 
   const handleToggleScanned = async (att: Attendee) => {
     setActiveMenuId(null);
     const newScanned = !att.isScanned;
-    await updateAttendeeAsync(att.id, {
-      isScanned: newScanned,
-      scannedAt: newScanned ? new Date().toISOString() : undefined,
-    });
-    loadAttendees();
+    try {
+      const updated = await updateAttendeeAsync(att.id, {
+        isScanned: newScanned,
+        scannedAt: newScanned ? new Date().toISOString() : undefined,
+      });
+      if (!updated) throw new Error('Invité introuvable dans Supabase.');
+      await loadAttendees();
+    } catch (error) {
+      setConnectionError(error instanceof Error ? error.message : 'Impossible de modifier le statut du scan.');
+    }
   };
 
   const handleDelete = async (id: string, name: string) => {
     setActiveMenuId(null);
     if (confirm(`Voulez-vous vraiment supprimer l'inscription de ${name} ?`)) {
-      await deleteAttendeeAsync(id);
-      loadAttendees();
+      try {
+        if (!(await deleteAttendeeAsync(id))) throw new Error('Invité introuvable dans Supabase.');
+        await loadAttendees();
+      } catch (error) {
+        setConnectionError(error instanceof Error ? error.message : 'Impossible de supprimer cet invité.');
+      }
     }
   };
 
   const handleSaveTable = async (e: React.FormEvent) => {
     e.preventDefault();
     if (editingAttendee) {
-      await updateAttendeeAsync(editingAttendee.id, { tableNumber: tableInput.trim() });
-      setEditingAttendee(null);
-      loadAttendees();
+      try {
+        const updated = await updateAttendeeAsync(editingAttendee.id, { tableNumber: tableInput.trim() });
+        if (!updated) throw new Error('Invité introuvable dans Supabase.');
+        setEditingAttendee(null);
+        await loadAttendees();
+      } catch (error) {
+        setConnectionError(error instanceof Error ? error.message : 'Impossible de modifier la table.');
+      }
     }
   };
 
@@ -282,7 +313,9 @@ export default function AdminPage() {
       setNewEmail('');
       setNewCompany('');
       setNewJobTitle('');
-      loadAttendees();
+      await loadAttendees();
+    } catch (error) {
+      setConnectionError(error instanceof Error ? error.message : 'Impossible d’ajouter l’invité dans Supabase.');
     } finally {
       setIsAdding(false);
     }
@@ -291,9 +324,14 @@ export default function AdminPage() {
   const handleSaveMrCheyPhoto = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!mrCheyPhotoInput.trim()) return;
-    await updateMrCheyPhoto(mrCheyPhotoInput.trim());
-    setSettingsSuccessMsg('Portrait de Mr Chey mis à jour avec succès !');
-    setTimeout(() => setSettingsSuccessMsg(''), 4000);
+    try {
+      await updateMrCheyPhoto(mrCheyPhotoInput.trim());
+      setSettingsSuccessMsg('Portrait de Mr Chey mis à jour avec succès !');
+      setConnectionError('');
+      setTimeout(() => setSettingsSuccessMsg(''), 4000);
+    } catch (error) {
+      setConnectionError(error instanceof Error ? error.message : 'Impossible d’enregistrer le portrait.');
+    }
   };
 
   const handleAddPartner = async (e: React.FormEvent) => {
@@ -306,22 +344,32 @@ export default function AdminPage() {
       logoUrl: newPartnerLogo.trim() || undefined,
     };
     const updated = [...partners, newPartner];
-    setPartners(updated);
-    await savePartners(updated);
-    setShowAddPartnerModal(false);
-    setNewPartnerName('');
-    setNewPartnerLogo('');
-    setSettingsSuccessMsg('Partenaire ajouté avec succès !');
-    setTimeout(() => setSettingsSuccessMsg(''), 4000);
+    try {
+      await savePartners(updated);
+      setPartners(updated);
+      setShowAddPartnerModal(false);
+      setNewPartnerName('');
+      setNewPartnerLogo('');
+      setSettingsSuccessMsg('Partenaire ajouté avec succès !');
+      setConnectionError('');
+      setTimeout(() => setSettingsSuccessMsg(''), 4000);
+    } catch (error) {
+      setConnectionError(error instanceof Error ? error.message : 'Impossible d’enregistrer le partenaire.');
+    }
   };
 
   const handleDeletePartner = async (id: string) => {
     if (confirm('Voulez-vous supprimer ce partenaire ?')) {
       const updated = partners.filter((p) => p.id !== id);
-      setPartners(updated);
-      await savePartners(updated);
-      setSettingsSuccessMsg('Partenaire supprimé.');
-      setTimeout(() => setSettingsSuccessMsg(''), 4000);
+      try {
+        await savePartners(updated);
+        setPartners(updated);
+        setSettingsSuccessMsg('Partenaire supprimé.');
+        setConnectionError('');
+        setTimeout(() => setSettingsSuccessMsg(''), 4000);
+      } catch (error) {
+        setConnectionError(error instanceof Error ? error.message : 'Impossible de supprimer le partenaire.');
+      }
     }
   };
 
@@ -372,41 +420,47 @@ export default function AdminPage() {
     document.body.removeChild(link);
   };
 
-  const handleImportCsv = () => {
+  const handleImportCsv = async () => {
     if (!csvText.trim()) return;
     const lines = csvText.trim().split('\n');
     let count = 0;
 
-    lines.forEach((line, index) => {
-      if (
-        index === 0 &&
-        (line.toLowerCase().includes('nom') || line.toLowerCase().includes('name'))
-      ) {
-        return;
+    try {
+      for (const [index, line] of lines.entries()) {
+        if (
+          index === 0 &&
+          (line.toLowerCase().includes('nom') || line.toLowerCase().includes('name'))
+        ) {
+          continue;
+        }
+        const parts = line.split(',').map((p) => p.replace(/^["']|["']$/g, '').trim());
+        if (parts[0] && parts[1]) {
+          const isVip = parts[5]?.toLowerCase() === 'vip';
+          await registerAttendeeAsync({
+            fullName: parts[0],
+            phone: parts[1],
+            email: parts[2] || undefined,
+            company: parts[3] || undefined,
+            jobTitle: parts[4] || undefined,
+            category: (isVip ? 'vip' : 'standard') as TicketCategory,
+            price: isVip ? 50 : 30,
+            paymentMethod: 'cash',
+            paymentStatus: 'validated',
+            tableNumber: parts[6] || 'Table Import',
+          });
+          count++;
+        }
       }
-      const parts = line.split(',').map((p) => p.replace(/^["']|["']$/g, '').trim());
-      if (parts[0] && parts[1]) {
-        const isVip = parts[5]?.toLowerCase() === 'vip';
-        registerAttendee({
-          fullName: parts[0],
-          phone: parts[1],
-          email: parts[2] || undefined,
-          company: parts[3] || undefined,
-          jobTitle: parts[4] || undefined,
-          category: (isVip ? 'vip' : 'standard') as TicketCategory,
-          price: isVip ? 50 : 30,
-          paymentMethod: 'cash',
-          paymentStatus: 'validated',
-          tableNumber: parts[6] || 'Table Import',
-        });
-        count++;
-      }
-    });
 
-    alert(`${count} participant(s) importé(s) avec succès !`);
-    setShowImportModal(false);
-    setCsvText('');
-    loadAttendees();
+      alert(`${count} participant(s) importé(s) avec succès dans Supabase !`);
+      setShowImportModal(false);
+      setCsvText('');
+      await loadAttendees();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Erreur pendant l’import dans Supabase.';
+      await loadAttendees();
+      setConnectionError(`${count} participant(s) importé(s). ${message}`);
+    }
   };
 
   const sendWhatsAppTicket = (att: Attendee) => {
@@ -467,6 +521,14 @@ export default function AdminPage() {
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
+            {!isSupabaseConfigured && (
+              <p className="text-xs text-amber-200">
+                Supabase n&apos;est pas configuré : le tableau de bord restera inaccessible.
+              </p>
+            )}
+            {connectionError && (
+              <p className="text-xs text-rose-300">{connectionError}</p>
+            )}
             <div>
               <input
                 type="password"
@@ -566,6 +628,14 @@ export default function AdminPage() {
           </div>
         </div>
       </header>
+
+      {connectionError && (
+        <div className="max-w-7xl mx-auto px-6 sm:px-10 mt-4">
+          <div className="p-3 bg-rose-950/80 border border-rose-500/50 rounded-lg text-rose-200 text-xs">
+            {connectionError}
+          </div>
+        </div>
+      )}
 
       {/* Real-time New User Alert Notification Banner */}
       {newUserAlert && (

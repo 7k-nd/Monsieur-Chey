@@ -47,6 +47,7 @@ export default function ScannerPage() {
   const [manualToken, setManualToken] = useState('');
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [connectionError, setConnectionError] = useState('');
   const [stats, setStats] = useState({ total: 0, scanned: 0 });
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -54,16 +55,23 @@ export default function ScannerPage() {
   const isScanningRef = useRef(false);
 
   const updateStats = async () => {
-    const all = await getStoredAttendeesAsync();
-    const scanned = all.filter((a) => a.isScanned).length;
-    setStats({ total: all.length, scanned });
+    try {
+      const all = await getStoredAttendeesAsync();
+      const scanned = all.filter((a) => a.isScanned).length;
+      setStats({ total: all.length, scanned });
+      setConnectionError('');
+    } catch (error) {
+      setConnectionError(error instanceof Error ? error.message : 'Impossible de joindre Supabase.');
+      throw error;
+    }
   };
 
   useEffect(() => {
     const authSession = sessionStorage.getItem('diner_scan_auth');
     if (authSession === 'true') {
-      setIsAuthenticated(true);
-      updateStats();
+      void updateStats()
+        .then(() => setIsAuthenticated(true))
+        .catch(() => sessionStorage.removeItem('diner_scan_auth'));
     }
 
     ensureDefaultPins();
@@ -72,7 +80,7 @@ export default function ScannerPage() {
   // Supabase realtime sync
   useEffect(() => {
     if (!isAuthenticated) return;
-    updateStats();
+    void updateStats().catch(() => undefined);
 
     const client = supabase;
     if (client) {
@@ -82,7 +90,7 @@ export default function ScannerPage() {
           'postgres_changes',
           { event: '*', schema: 'public', table: 'attendees' },
           () => {
-            updateStats();
+            void updateStats().catch(() => undefined);
           }
         )
         .subscribe();
@@ -93,14 +101,18 @@ export default function ScannerPage() {
     }
   }, [isAuthenticated]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     const correctPin = getStoredScannerPin();
     if (pinInput.trim() === correctPin) {
-      setIsAuthenticated(true);
-      sessionStorage.setItem('diner_scan_auth', 'true');
-      setPinError(false);
-      updateStats();
+      try {
+        await updateStats();
+        setIsAuthenticated(true);
+        sessionStorage.setItem('diner_scan_auth', 'true');
+        setPinError(false);
+      } catch {
+        sessionStorage.removeItem('diner_scan_auth');
+      }
     } else {
       setPinError(true);
     }
@@ -155,7 +167,7 @@ export default function ScannerPage() {
     try {
       const result = await verifyAndCheckInAsync(rawToken);
       setScanResult(result);
-      await updateStats();
+      void updateStats().catch(() => undefined);
 
       if (result.status === 'valid') {
         playFeedbackSound('success');
@@ -260,6 +272,14 @@ export default function ScannerPage() {
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
+            {!isSupabaseConfigured && (
+              <p className="text-xs text-amber-200">
+                Supabase doit être configuré pour ouvrir le scanner.
+              </p>
+            )}
+            {connectionError && (
+              <p className="text-xs text-rose-300">{connectionError}</p>
+            )}
             <div>
               <input
                 type="password"
@@ -502,12 +522,12 @@ export default function ScannerPage() {
             {isSupabaseConfigured ? (
               <>
                 <Wifi className="w-3 h-3 text-emerald-400" />
-                <span className="text-[10px] text-emerald-400 font-semibold">Supabase Connecté (Direct)</span>
+                <span className="text-[10px] text-emerald-400 font-semibold">Supabase configuré</span>
               </>
             ) : (
               <>
                 <WifiOff className="w-3 h-3 text-amber-400" />
-                <span className="text-[10px] text-amber-400 font-semibold">Mode Local</span>
+                <span className="text-[10px] text-amber-400 font-semibold">Supabase requis</span>
               </>
             )}
           </div>
@@ -523,6 +543,12 @@ export default function ScannerPage() {
       </header>
 
       <main className="max-w-md w-full mx-auto my-auto space-y-6 text-center">
+        {connectionError && (
+          <div className="p-3 rounded-lg bg-amber-950/70 border border-amber-500/40 text-xs text-amber-100">
+            {connectionError}
+          </div>
+        )}
+
         {/* Stats bar */}
         <div className="p-4 rounded-lg bg-[#1c1d1e] border border-white/10 flex items-center justify-around text-xs shadow-lg">
           <div>

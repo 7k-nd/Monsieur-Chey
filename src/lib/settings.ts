@@ -1,4 +1,4 @@
-import { supabase, isSupabaseConfigured } from './supabase';
+import { getSupabaseClient } from './supabase';
 
 export interface Partner {
   id: string;
@@ -6,8 +6,6 @@ export interface Partner {
   category: string;
   logoUrl?: string;
 }
-
-const SETTINGS_KEY = 'diner_entrepreneurs_settings_v1';
 
 export const DEFAULT_PARTNERS: Partner[] = [
   { id: '1', name: 'Katanga Mining Hub', category: 'Partenaire Platine' },
@@ -20,101 +18,68 @@ export const DEFAULT_PARTNERS: Partner[] = [
 
 export const DEFAULT_MR_CHEY_PHOTO = '/images/monsieur chey.jpg';
 
-interface SiteSettings {
+export interface SiteSettings {
   mrCheyPhoto: string;
   partners: Partner[];
 }
 
-export function getLocalSettings(): SiteSettings {
-  if (typeof window === 'undefined') {
-    return { mrCheyPhoto: DEFAULT_MR_CHEY_PHOTO, partners: DEFAULT_PARTNERS };
-  }
-  try {
-    const raw = localStorage.getItem(SETTINGS_KEY);
-    if (!raw) {
-      const initial: SiteSettings = {
-        mrCheyPhoto: DEFAULT_MR_CHEY_PHOTO,
-        partners: DEFAULT_PARTNERS,
-      };
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify(initial));
-      return initial;
-    }
-    return JSON.parse(raw);
-  } catch (e) {
-    console.error('Error reading settings from localStorage', e);
-    return { mrCheyPhoto: DEFAULT_MR_CHEY_PHOTO, partners: DEFAULT_PARTNERS };
-  }
-}
-
-export function saveLocalSettings(settings: SiteSettings): void {
-  if (typeof window === 'undefined') return;
-  try {
-    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
-    window.dispatchEvent(new Event('diner_settings_updated'));
-  } catch (e) {
-    console.error('Error saving settings to localStorage', e);
-  }
+export function getDefaultSettings(): SiteSettings {
+  return {
+    mrCheyPhoto: DEFAULT_MR_CHEY_PHOTO,
+    partners: DEFAULT_PARTNERS,
+  };
 }
 
 export async function fetchRemoteSettings(): Promise<SiteSettings> {
-  const local = getLocalSettings();
-  if (!supabase) return local;
+  const { data, error } = await getSupabaseClient()
+    .from('site_settings')
+    .select('*');
 
-  try {
-    const { data, error } = await supabase.from('site_settings').select('*');
-    if (!error && data && data.length > 0) {
-      const remoteSettings: Partial<SiteSettings> = {};
-      data.forEach((row: { key: string; value: any }) => {
-        if (row.key === 'mr_chey_photo' && row.value?.url) {
-          remoteSettings.mrCheyPhoto = row.value.url;
-        }
-        if (row.key === 'partners' && Array.isArray(row.value)) {
-          remoteSettings.partners = row.value;
-        }
-      });
-      const merged = { ...local, ...remoteSettings };
-      saveLocalSettings(merged);
-      return merged;
-    }
-  } catch (err) {
-    // If table doesn't exist yet, smoothly fallback
+  if (error) {
+    console.error('Supabase fetch site settings error:', error);
+    throw new Error('Impossible de charger les paramètres du site depuis Supabase.');
   }
 
-  return local;
+  const settings = getDefaultSettings();
+  data?.forEach((row: { key: string; value: unknown }) => {
+    if (
+      row.key === 'mr_chey_photo' &&
+      typeof row.value === 'object' &&
+      row.value !== null &&
+      'url' in row.value &&
+      typeof row.value.url === 'string'
+    ) {
+      settings.mrCheyPhoto = row.value.url;
+    }
+    if (row.key === 'partners' && Array.isArray(row.value)) {
+      settings.partners = row.value as Partner[];
+    }
+  });
+  return settings;
 }
 
 export async function updateMrCheyPhoto(photoUrl: string): Promise<void> {
-  const settings = getLocalSettings();
-  settings.mrCheyPhoto = photoUrl;
-  saveLocalSettings(settings);
+  const { error } = await getSupabaseClient().from('site_settings').upsert({
+    key: 'mr_chey_photo',
+    value: { url: photoUrl },
+    updated_at: new Date().toISOString(),
+  });
 
-  if (supabase) {
-    try {
-      await supabase.from('site_settings').upsert({
-        key: 'mr_chey_photo',
-        value: { url: photoUrl },
-        updated_at: new Date().toISOString(),
-      });
-    } catch (e) {
-      // Ignored if table not created
-    }
+  if (error) {
+    console.error('Supabase update Mr Chey photo error:', error);
+    throw new Error('Impossible d’enregistrer le portrait dans Supabase.');
   }
 }
 
 export async function savePartners(partners: Partner[]): Promise<void> {
-  const settings = getLocalSettings();
-  settings.partners = partners;
-  saveLocalSettings(settings);
+  const { error } = await getSupabaseClient().from('site_settings').upsert({
+    key: 'partners',
+    value: partners,
+    updated_at: new Date().toISOString(),
+  });
 
-  if (supabase) {
-    try {
-      await supabase.from('site_settings').upsert({
-        key: 'partners',
-        value: partners,
-        updated_at: new Date().toISOString(),
-      });
-    } catch (e) {
-      // Ignored if table not created
-    }
+  if (error) {
+    console.error('Supabase save partners error:', error);
+    throw new Error('Impossible d’enregistrer les partenaires dans Supabase.');
   }
 }

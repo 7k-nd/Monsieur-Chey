@@ -2,21 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { Building2 } from 'lucide-react';
-import { Partner, getLocalSettings, fetchRemoteSettings } from '@/lib/settings';
+import { Partner, fetchRemoteSettings, DEFAULT_PARTNERS } from '@/lib/settings';
 
 export default function PartnersSection() {
-  const [partners, setPartners] = useState<Partner[]>([]);
+  const [partners, setPartners] = useState<Partner[]>(DEFAULT_PARTNERS);
 
   useEffect(() => {
-    setPartners(getLocalSettings().partners);
-
-    fetchRemoteSettings().then((s) => setPartners(s.partners));
-
-    const handleUpdate = () => {
-      setPartners(getLocalSettings().partners);
-    };
-    window.addEventListener('diner_settings_updated', handleUpdate);
-    return () => window.removeEventListener('diner_settings_updated', handleUpdate);
+    fetchRemoteSettings()
+      .then((settings) => setPartners(settings.partners))
+      .catch((error) => console.error('Unable to load event settings:', error));
   }, []);
 
   const marqueePartners = [...partners, ...partners];

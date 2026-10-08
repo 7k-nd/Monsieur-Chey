@@ -2,20 +2,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { Quote } from 'lucide-react';
-import { getLocalSettings, fetchRemoteSettings, DEFAULT_MR_CHEY_PHOTO } from '@/lib/settings';
+import { fetchRemoteSettings, DEFAULT_MR_CHEY_PHOTO } from '@/lib/settings';
 
 export default function VisionSection() {
   const [mrCheyPhoto, setMrCheyPhoto] = useState(DEFAULT_MR_CHEY_PHOTO);
 
   useEffect(() => {
-    setMrCheyPhoto(getLocalSettings().mrCheyPhoto);
-    fetchRemoteSettings().then((s) => setMrCheyPhoto(s.mrCheyPhoto));
-
-    const handleUpdate = () => {
-      setMrCheyPhoto(getLocalSettings().mrCheyPhoto);
-    };
-    window.addEventListener('diner_settings_updated', handleUpdate);
-    return () => window.removeEventListener('diner_settings_updated', handleUpdate);
+    fetchRemoteSettings()
+      .then((settings) => setMrCheyPhoto(settings.mrCheyPhoto))
+      .catch((error) => console.error('Unable to load event settings:', error));
   }, []);
 
   return (

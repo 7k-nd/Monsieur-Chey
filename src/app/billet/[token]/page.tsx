@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { findAttendeeByTokenAsync, findAttendeeByToken, saveMyLastTicketToken } from '@/lib/storage';
+import { findAttendeeByTokenAsync, saveMyLastTicketToken } from '@/lib/storage';
 import { Attendee } from '@/types';
 import TicketCard from '@/components/TicketCard';
 import { ArrowLeft, AlertCircle, RefreshCw } from 'lucide-react';
@@ -15,19 +15,29 @@ export default function TicketPage() {
   const token = typeof params?.token === 'string' ? params.token : '';
   const [attendee, setAttendee] = useState<Attendee | null>(null);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
     let isMounted = true;
     async function load() {
       if (token) {
         setLoading(true);
-        const found = await findAttendeeByTokenAsync(token);
-        if (isMounted) {
-          setAttendee(found || null);
-          if (found) {
-            saveMyLastTicketToken(token);
+        try {
+          const found = await findAttendeeByTokenAsync(token);
+          if (isMounted) {
+            setAttendee(found || null);
+            setLoadError('');
+            if (found) saveMyLastTicketToken(token);
           }
-          setLoading(false);
+        } catch (error) {
+          if (isMounted) {
+            setAttendee(null);
+            setLoadError(error instanceof Error ? error.message : 'Impossible de charger le billet depuis Supabase.');
+          }
+        } finally {
+          if (isMounted) {
+            setLoading(false);
+          }
         }
       }
     }
@@ -40,20 +50,23 @@ export default function TicketPage() {
   useEffect(() => {
     const handleUpdate = async () => {
       if (token) {
-        const found = await findAttendeeByTokenAsync(token);
-        setAttendee((prev) => {
-          if (prev && prev.paymentStatus !== 'validated' && found?.paymentStatus === 'validated') {
-            import('canvas-confetti').then((c) => {
-              const confetti = c.default || c;
-              confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
-            }).catch(() => {});
-          }
-          return found || null;
-        });
+        try {
+          const found = await findAttendeeByTokenAsync(token);
+          setLoadError('');
+          setAttendee((prev) => {
+            if (prev && prev.paymentStatus !== 'validated' && found?.paymentStatus === 'validated') {
+              import('canvas-confetti').then((c) => {
+                const confetti = c.default || c;
+                confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
+              }).catch(() => {});
+            }
+            return found || null;
+          });
+        } catch (error) {
+          setLoadError(error instanceof Error ? error.message : 'Impossible d’actualiser le billet depuis Supabase.');
+        }
       }
     };
-
-    window.addEventListener('diner_attendees_updated', handleUpdate);
 
     const client = supabase;
     if (client && token) {
@@ -75,12 +88,11 @@ export default function TicketPage() {
         .subscribe();
 
       return () => {
-        window.removeEventListener('diner_attendees_updated', handleUpdate);
         client.removeChannel(channel);
       };
     }
 
-    return () => window.removeEventListener('diner_attendees_updated', handleUpdate);
+    return;
   }, [token]);
 
   return (
@@ -109,6 +121,14 @@ export default function TicketPage() {
           <div className="text-center py-20">
             <RefreshCw className="w-8 h-8 text-[#eabe7c] animate-spin mx-auto mb-4" />
             <p className="text-xs text-white/60">Chargement de votre billet officiel...</p>
+          </div>
+        ) : loadError ? (
+          <div className="bg-[#1c1d1e] p-8 rounded border border-amber-500/30 text-center space-y-4">
+            <div className="w-12 h-12 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center mx-auto">
+              <AlertCircle className="w-6 h-6" />
+            </div>
+            <h2 className="font-serif text-xl font-bold text-white">Connexion à Supabase impossible</h2>
+            <p className="text-xs text-white/60 max-w-md mx-auto">{loadError}</p>
           </div>
         ) : attendee ? (
           <div className="space-y-6">

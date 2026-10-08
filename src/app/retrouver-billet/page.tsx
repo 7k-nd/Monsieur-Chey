@@ -11,25 +11,34 @@ export default function RetrouverBilletPage() {
   const [results, setResults] = useState<Attendee[]>([]);
   const [searched, setSearched] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState('');
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
 
     setIsSearching(true);
-    const byToken = await findAttendeeByTokenAsync(query.trim());
-    if (byToken) {
-      setResults([byToken]);
-      saveMyLastTicketToken(byToken.qrToken);
-    } else {
-      const byPhone = await findAttendeeByPhoneAsync(query.trim());
-      setResults(byPhone);
-      if (byPhone.length > 0) {
-        saveMyLastTicketToken(byPhone[0].qrToken);
+    setSearchError('');
+    try {
+      const byToken = await findAttendeeByTokenAsync(query.trim());
+      if (byToken) {
+        setResults([byToken]);
+        saveMyLastTicketToken(byToken.qrToken);
+      } else {
+        const byPhone = await findAttendeeByPhoneAsync(query.trim());
+        setResults(byPhone);
+        if (byPhone.length > 0) {
+          saveMyLastTicketToken(byPhone[0].qrToken);
+        }
       }
+      setSearched(true);
+    } catch (error) {
+      setResults([]);
+      setSearched(true);
+      setSearchError(error instanceof Error ? error.message : 'Impossible de rechercher le billet dans Supabase.');
+    } finally {
+      setIsSearching(false);
     }
-    setSearched(true);
-    setIsSearching(false);
   };
 
   return (
@@ -78,15 +87,24 @@ export default function RetrouverBilletPage() {
 
           <button
             type="submit"
+            disabled={isSearching}
             className="w-full luther-btn luther-btn-primary flex items-center justify-center gap-2 cursor-pointer"
           >
             <Search className="w-4 h-4" />
-            <span>Rechercher mon billet</span>
+            <span>{isSearching ? 'Recherche en cours...' : 'Rechercher mon billet'}</span>
           </button>
         </form>
 
         {/* Results */}
-        {searched && (
+        {searchError && (
+          <div className="p-6 rounded bg-[#1c1d1e] border border-amber-500/30 text-center space-y-2">
+            <AlertCircle className="w-6 h-6 text-amber-400 mx-auto" />
+            <p className="text-xs text-white font-medium">Connexion à Supabase impossible</p>
+            <p className="text-[11px] text-white/60">{searchError}</p>
+          </div>
+        )}
+
+        {searched && !searchError && (
           <div className="space-y-4 animate-fade-in">
             <h2 className="text-[10px] uppercase font-bold tracking-widest text-white/40">
               Résultat(s) ({results.length}) :
