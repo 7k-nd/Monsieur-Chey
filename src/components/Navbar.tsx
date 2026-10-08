@@ -66,7 +66,7 @@ export default function Navbar({ onOpenRegister, theme = 'light', onToggleTheme 
         </nav>
 
         {/* Action CTAs (Scan button removed; Mon Billet directly opens user's ticket) */}
-        <div className="hidden sm:flex items-center gap-4">
+        <div className="hidden lg:flex items-center gap-4">
           {onToggleTheme && (
             <button
               onClick={onToggleTheme}

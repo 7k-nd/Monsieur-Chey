@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { ArrowUp, Ticket, Shield } from 'lucide-react';
+import { createWhatsAppUrl, WHATSAPP_CONTACT_NUMBER } from '@/lib/whatsapp';
 
 export default function Footer() {
   const scrollToTop = () => {
@@ -68,7 +69,10 @@ export default function Footer() {
 
             <div>
               <a
-                href="https://wa.me/243997173630?text=Bonjour%20Mr%20Chey,%20j'ai%20une%20question%20concernant%20le%20D%C3%AEner%20des%20Entrepreneurs"
+                href={createWhatsAppUrl(
+                  "Bonjour Mr Chey, j'ai une question concernant le Dîner des Entrepreneurs.",
+                  WHATSAPP_CONTACT_NUMBER
+                )}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-950 border border-emerald-500/40 text-emerald-300 rounded text-xs font-semibold hover:bg-emerald-900 transition-colors"

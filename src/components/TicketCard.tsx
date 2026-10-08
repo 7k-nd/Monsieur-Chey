@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Attendee } from '@/types';
 import { Printer, Share2, Lock, CheckCircle2, Clock, MessageCircle, AlertTriangle } from 'lucide-react';
+import { openWhatsApp, WHATSAPP_CONTACT_NUMBER } from '@/lib/whatsapp';
 
 interface TicketCardProps {
   attendee: Attendee;
@@ -47,18 +48,21 @@ export default function TicketCard({ attendee }: TicketCardProps) {
   };
 
   const handleWhatsAppShare = () => {
-    const text = encodeURIComponent(
-      `Voici mon billet pour Le Dîner des Entrepreneurs, organisé par Mr Chey.\n\nNom: ${attendee.fullName}\nBillet: ${attendee.category.toUpperCase()}\nTable: ${attendee.tableNumber || 'À l\'accueil'}`
-    );
-    window.open(`https://wa.me/?text=${text}`, '_blank');
+    const ticketUrl = `${window.location.origin}/billet/${attendee.qrToken}`;
+    const message =
+      `Voici mon billet pour Le Dîner des Entrepreneurs, organisé par Mr Chey.\n\n` +
+      `Nom : ${attendee.fullName}\nPass : ${attendee.category.toUpperCase()}\n` +
+      `Table : ${attendee.tableNumber || "À l'accueil"}\nBillet : ${ticketUrl}`;
+    openWhatsApp(message);
   };
 
   const handleWhatsAppValidation = () => {
     const ref = attendee.paymentReference || attendee.qrToken;
-    const text = encodeURIComponent(
-      `Bonjour Mr Chey & Organisation,\nJe me suis pré-enregistré pour Le Dîner des Entrepreneurs.\nNom: ${attendee.fullName}\nBillet: ${attendee.category.toUpperCase()} ($${attendee.price})\nRéférence de paiement: ${ref}\nMerci de valider mon accès.`
-    );
-    window.open(`https://wa.me/243997173630?text=${text}`, '_blank');
+    const message =
+      `Bonjour Mr Chey & Organisation,\nJe me suis pré-enregistré pour Le Dîner des Entrepreneurs.\n` +
+      `Nom : ${attendee.fullName}\nPass : ${attendee.category.toUpperCase()} ($${attendee.price})\n` +
+      `Référence de paiement : ${ref}\nMerci de valider mon accès.`;
+    openWhatsApp(message, WHATSAPP_CONTACT_NUMBER);
   };
 
   const getPrice = (category: string) => {

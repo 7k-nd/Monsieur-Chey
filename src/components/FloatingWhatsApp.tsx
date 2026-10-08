@@ -1,11 +1,11 @@
 'use client';
 
 import React from 'react';
+import { createWhatsAppUrl, WHATSAPP_CONTACT_NUMBER } from '@/lib/whatsapp';
 
 export default function FloatingWhatsApp() {
-  const whatsappNumber = '243997173630';
   const defaultMessage = "Bonjour Mr Chey, je vous contacte au sujet du Dîner des Entrepreneurs à Lubumbashi.";
-  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(defaultMessage)}`;
+  const whatsappUrl = createWhatsAppUrl(defaultMessage, WHATSAPP_CONTACT_NUMBER);
 
   return (
     <aside aria-label="Assistance WhatsApp" className="fixed bottom-6 right-6 z-40 group">

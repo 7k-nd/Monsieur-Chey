@@ -24,6 +24,7 @@ import {
   DEFAULT_MR_CHEY_PHOTO,
 } from '@/lib/settings';
 import { Attendee, PaymentStatus, TicketCategory } from '@/types';
+import { openWhatsApp } from '@/lib/whatsapp';
 import {
   ShieldCheck,
   Users,
@@ -415,11 +416,7 @@ export default function AdminPage() {
     const text = `Bonjour ${att.fullName},\nVoici votre billet officiel pour Le Dîner des Entrepreneurs avec Mr Chey : ${ticketUrl}\nTable assignée : ${
       att.tableNumber || 'À l\'accueil'
     }.`;
-    const cleanPhone = att.phone.replace(/[\s\-\+]/g, '');
-    window.open(
-      `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(text)}`,
-      '_blank'
-    );
+    openWhatsApp(text, att.phone);
   };
 
   const totalCount = attendees.length;
