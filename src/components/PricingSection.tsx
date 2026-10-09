@@ -13,33 +13,28 @@ export const TICKET_TIERS: TicketConfig[] = [
     id: 'standard',
     name: 'Pass Standard',
     price: 30,
-    badge: 'Formule Entrepreneur',
-    description: 'Accès complet au dîner, aux échanges stratégiques et au networking d’affaires.',
+    badge: 'Accès aux activités communes',
+    description: 'Prenez part au dîner, aux échanges entre participants et à l’ensemble des activités communes.',
     features: [
-      'Accès complet à la soirée & aux débats',
-      'Cocktail d’accueil & Dîner gastronomique 3 services',
-      'Participation aux sessions de networking général',
-      'Billet QR sécurisé personnel envoyé immédiatement',
+      'Accès au dîner et à toutes les activités communes',
+      'Retours d’expérience et échanges entre participants',
+      'Participation au speed-networking',
     ],
-    seatsTotal: 70,
-    seatsRemaining: 16,
   },
   {
     id: 'vip',
     name: 'Pass VIP',
     price: 50,
-    badge: 'Recommandé VIP',
+    badge: 'Expérience VIP',
     isPopular: true,
-    description: 'Place privilégiée à la Table d’Honneur avec Mr Chey et les capitaines d’industrie.',
+    description: 'La formule tout inclus, avec un placement privilégié et des possibilités de visibilité supplémentaires.',
     features: [
-      'Tout le contenu du Pass Standard',
-      'Place à la Table d’Honneur avec Mr Chey',
-      'Accès au cocktail VIP privé d’avant-soirée',
-      'Accès prioritaire Red Carpet & Photo Call dédié',
-      'Billet QR sécurisé personnel avec placement prioritaire',
+      'Accès au dîner et à toutes les activités',
+      'Placement privilégié',
+      'Possibilité de présenter brièvement son entreprise et ses défis',
+      'Possibilité d’apporter roll-up et flyers selon les consignes d’installation',
+      'Interview vidéo pour une visibilité sur les comptes de l’organisateur et des partenaires',
     ],
-    seatsTotal: 30,
-    seatsRemaining: 5,
   },
 ];
 
@@ -57,7 +52,7 @@ export default function PricingSection({ onSelectCategory }: PricingSectionProps
             Tarifs de Participation.
           </h2>
           <p className="text-base text-white/70 font-light">
-            Paiement par Airtel Money ou en présentiel auprès du secrétariat.
+            Réglez votre billet par Airtel Money, puis transmettez votre justificatif sur WhatsApp. La réservation est confirmée après vérification du paiement.
           </p>
         </div>
 
@@ -76,7 +71,7 @@ export default function PricingSection({ onSelectCategory }: PricingSectionProps
                 {/* Popular Tag with bright white-gold styling */}
                 {tier.isPopular && (
                   <div className="absolute -top-3.5 left-8 px-4 py-1 bg-white text-black text-[10px] font-bold uppercase tracking-widest rounded-full shadow-lg border border-white">
-                    Place d&apos;Honneur VIP
+                    Formule VIP
                   </div>
                 )}
 
@@ -124,7 +119,7 @@ export default function PricingSection({ onSelectCategory }: PricingSectionProps
                       tier.isPopular ? 'luther-btn-primary shadow-[0_0_20px_rgba(234,190,124,0.3)]' : 'luther-btn-stroke bg-white/5 hover:bg-white hover:text-black border-white/30'
                     }`}
                   >
-                    <span>Réserver en {tier.name} (${tier.price})</span>
+                    <span>Réserver en {tier.name} ({tier.price} USD)</span>
                   </button>
                 </div>
               </div>

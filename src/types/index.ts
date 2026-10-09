@@ -34,8 +34,6 @@ export interface TicketConfig {
   description: string;
   features: string[];
   isPopular?: boolean;
-  seatsTotal: number;
-  seatsRemaining: number;
 }
 
 export interface ScanResult {

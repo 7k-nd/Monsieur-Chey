@@ -13,6 +13,8 @@ export default function PartnersSection() {
       .catch((error) => console.error('Unable to load event settings:', error));
   }, []);
 
+  if (partners.length === 0) return null;
+
   const marqueePartners = [...partners, ...partners];
 
   return (

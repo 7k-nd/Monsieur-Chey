@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowUp, Ticket, Shield } from 'lucide-react';
-import { createWhatsAppUrl, WHATSAPP_CONTACT_NUMBER } from '@/lib/whatsapp';
+import { createWhatsAppUrl, WHATSAPP_CONTACT_DISPLAY, WHATSAPP_CONTACT_NUMBER } from '@/lib/whatsapp';
 
 export default function Footer() {
   const scrollToTop = () => {
@@ -24,16 +24,16 @@ export default function Footer() {
           <div className="lg:col-span-5 space-y-4">
             <Image
               src="/logo.png"
-              alt="Logo Mr Chey"
+              alt="Logo Monsieur Chey"
               width={96}
               height={96}
               className="h-16 w-16 object-contain"
             />
             <p className="text-xs text-white/60 leading-relaxed font-light max-w-sm">
-              Le Dîner des Entrepreneurs est l&apos;initiative de référence pour dynamiser les partenariats d&apos;affaires et l&apos;investissement à Lubumbashi et dans le grand Katanga.
+              Une rencontre conviviale à Lubumbashi pour élargir son réseau, partager des expériences et créer de nouvelles collaborations.
             </p>
             <div className="text-xs text-[#eabe7c] font-semibold">
-              Samedi 21 Novembre 2026 • Lubumbashi
+              Samedi 21 novembre 2026 • 15h00 – 19h00 • Big Five
             </div>
           </div>
 
@@ -68,14 +68,14 @@ export default function Footer() {
             </ul>
 
             <div className="space-y-1 text-xs text-white/60 pt-2">
-              <p>Lubumbashi (Avenue Nyota, coin Mwenda)</p>
-              <p>Contact : +243 997 173 630</p>
+              <p>Big Five, croisement des avenues Nyota et Mwenda, près du Terminus Battant</p>
+              <p>Contact : {WHATSAPP_CONTACT_DISPLAY}</p>
             </div>
 
             <div>
               <a
                 href={createWhatsAppUrl(
-                  "Bonjour Mr Chey, j'ai une question concernant le Dîner des Entrepreneurs.",
+                  "Bonjour Monsieur Chey, j'ai une question concernant le Dîner des Entrepreneurs.",
                   WHATSAPP_CONTACT_NUMBER
                 )}
                 target="_blank"
@@ -96,7 +96,7 @@ export default function Footer() {
         <div className="pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-white/40">
           <div className="space-y-1 text-center sm:text-left">
             <p>
-              © 2026 Le Dîner des Entrepreneurs • Tous droits réservés. Une initiative de Mr Chey.
+              © 2026 Le Dîner des Entrepreneurs • Tous droits réservés. Une initiative de Monsieur Chey.
             </p>
             <p className="text-[11px] text-white/50">
               Conçu &amp; Développé par{' '}

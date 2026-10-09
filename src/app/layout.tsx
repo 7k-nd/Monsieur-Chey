@@ -2,16 +2,16 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Le Dîner des Entrepreneurs | Par Mr Chey - Big 5 Lubumbashi",
-  description: "L'événement d'exception réunissant leaders, fondateurs et investisseurs le samedi 21 novembre 2026 au Big 5 Lubumbashi (Av. Nyota, coin Mwenda).",
-  keywords: ["Dîner des Entrepreneurs", "Mr Chey", "Big 5 Lubumbashi", "Lubumbashi", "RDC", "Entrepreneuriat", "Networking VIP", "Luther"],
+  title: "Le Dîner des Entrepreneurs | Monsieur Chey - Big Five Lubumbashi",
+  description: "Une rencontre entre entrepreneurs à Lubumbashi, le samedi 21 novembre 2026 de 15h00 à 19h00 au Big Five, près du Terminus Battant.",
+  keywords: ["Dîner des Entrepreneurs", "Monsieur Chey", "Big Five Lubumbashi", "Lubumbashi", "RDC", "Entrepreneuriat", "Speed-networking"],
   icons: {
     icon: '/favicon.png',
     apple: '/apple-touch-icon.png',
   },
   openGraph: {
-    title: "Le Dîner des Entrepreneurs | Par Mr Chey - Big 5 Lubumbashi",
-    description: "Samedi 21 Novembre 2026 au Big 5 Lubumbashi (Av. Nyota, coin Mwenda). Réservez votre place dès maintenant.",
+    title: "Le Dîner des Entrepreneurs | Monsieur Chey - Big Five Lubumbashi",
+    description: "Samedi 21 novembre 2026, de 15h00 à 19h00, au Big Five à Lubumbashi. Rencontres, échanges et speed-networking.",
     type: "website",
     locale: "fr_FR",
   },

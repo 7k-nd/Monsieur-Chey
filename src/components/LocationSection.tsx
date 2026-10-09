@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { MapPin, Navigation, Car, Sparkles, Clock, Shield } from 'lucide-react';
+import { MapPin, Sparkles, Clock } from 'lucide-react';
 
 export default function LocationSection() {
   return (
@@ -14,10 +14,10 @@ export default function LocationSection() {
             Localisation & Accès
           </div>
           <h2 className="text-3xl sm:text-5xl font-serif text-white">
-            Un Cadre d&apos;Exception au Big 5 Lubumbashi.
+            Rendez-vous au Big Five, à Lubumbashi.
           </h2>
           <p className="text-base text-white/70 font-light">
-            Un espace prestigieux, sécurisé et facilement accessible avec service voiturier et accueil dédié.
+            Retrouvez-nous au croisement des avenues Nyota et Mwenda, près du Terminus Battant.
           </p>
         </div>
 
@@ -31,10 +31,10 @@ export default function LocationSection() {
                   Adresse Officielle
                 </span>
                 <h3 className="font-serif text-2xl sm:text-3xl text-white">
-                  Big 5 Lubumbashi
+                  Big Five, Lubumbashi
                 </h3>
                 <p className="text-sm text-white/80 mt-1 font-medium text-[#eabe7c]">
-                  Av. Nyota, coin Mwenda • Lubumbashi, Haut-Katanga
+                  Croisement des avenues Nyota et Mwenda, près du Terminus Battant
                 </p>
               </div>
 
@@ -45,8 +45,8 @@ export default function LocationSection() {
                     <Clock className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-white uppercase tracking-wider">Horaires stricts</h4>
-                    <p className="text-xs text-white/60 mt-0.5">Ouverture des portes à 15h00 pile pour le tapis rouge. Clôture des entrées à 16h15.</p>
+                    <h4 className="text-xs font-bold text-white uppercase tracking-wider">Horaires</h4>
+                    <p className="text-xs text-white/60 mt-0.5">Samedi 21 novembre 2026, de 15h00 à 19h00.</p>
                   </div>
                 </div>
 
@@ -55,18 +55,8 @@ export default function LocationSection() {
                     <Sparkles className="w-4 h-4" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-white uppercase tracking-wider">Dress Code</h4>
-                    <p className="text-xs text-white/60 mt-0.5">Tenue de Gala / Chic Professionnel (Costume cravate, robe de cocktail, tenue d&apos;affaires soignée).</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="p-2.5 rounded bg-black/40 text-[#eabe7c] shrink-0 border border-white/10">
-                    <Car className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-bold text-white uppercase tracking-wider">Parking & Sécurité</h4>
-                    <p className="text-xs text-white/60 mt-0.5">Parking privé surveillé 24/7 avec service d&apos;accueil et sécurité rapprochée au Big 5.</p>
+                    <h4 className="text-xs font-bold text-white uppercase tracking-wider">Tenue</h4>
+                    <p className="text-xs text-white/60 mt-0.5">Élégant et classique.</p>
                   </div>
                 </div>
 
@@ -75,7 +65,7 @@ export default function LocationSection() {
 
             <div className="pt-4">
               <a
-                href="https://maps.google.com/?q=Big+5+Lubumbashi+Avenue+Nyota+Lubumbashi"
+                href="https://maps.google.com/?q=Big+Five+Lubumbashi+Avenue+Nyota+Mwenda"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="luther-btn luther-btn-primary !text-[10px]"
@@ -88,8 +78,8 @@ export default function LocationSection() {
           {/* Map Area */}
           <div className="lg:col-span-6 bg-[#1c1d1e] p-8 rounded border border-white/10 flex flex-col justify-between text-center relative overflow-hidden">
             <div className="flex justify-between items-center text-xs font-mono text-white/50">
-              <span>GPS: -11.66089, 27.47938</span>
-              <span className="text-emerald-400 font-sans uppercase font-semibold text-[10px]">Zone Sécurisée VIP</span>
+              <span>Big Five • Lubumbashi</span>
+              <span className="text-[#eabe7c] font-sans uppercase font-semibold text-[10px]">Accès à la rencontre</span>
             </div>
 
             <div className="mt-6 mb-4">
@@ -97,17 +87,17 @@ export default function LocationSection() {
                 <MapPin className="w-7 h-7" />
               </div>
               <h4 className="font-serif text-2xl text-white">
-                Big 5 Lubumbashi
+                Big Five, Lubumbashi
               </h4>
               <p className="text-xs text-white/60 max-w-sm mx-auto mt-2">
-                Intersection Avenue Nyota et Rue Mwenda, Lubumbashi. Signalétique dédiée dès l&apos;entrée de l&apos;avenue.
+                Croisement des avenues Nyota et Mwenda, près du Terminus Battant.
               </p>
             </div>
 
             <div className="relative w-full h-[260px] overflow-hidden rounded border border-white/10 bg-[#111213]">
               <iframe
-                title="Carte Big 5 Lubumbashi"
-                src="https://www.google.com/maps?q=-11.66089,27.47938&z=15&output=embed"
+                title="Carte Big Five Lubumbashi"
+                src="https://www.google.com/maps?q=Big+Five+Lubumbashi+Avenue+Nyota+Mwenda&z=15&output=embed"
                 className="w-full h-full border-0"
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
@@ -116,7 +106,7 @@ export default function LocationSection() {
             </div>
 
             <div className="mt-4 p-3 bg-black/40 rounded border border-white/5 text-[11px] text-[#eabe7c]">
-              Un SMS avec l&apos;itinéraire direct vers le Big 5 vous est transmis dès confirmation de votre inscription.
+              Samedi 21 novembre 2026 • 15h00 – 19h00
             </div>
           </div>
 

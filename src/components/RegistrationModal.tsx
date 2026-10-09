@@ -2,10 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { X, Upload, Check, User, ArrowRight, ShieldCheck } from 'lucide-react';
-import { TicketCategory, PaymentMethod, Attendee } from '@/types';
+import { TicketCategory, Attendee } from '@/types';
 import { registerAttendeeAsync, saveMyLastTicketToken } from '@/lib/storage';
+import { WHATSAPP_CONTACT_DISPLAY } from '@/lib/whatsapp';
 import { TICKET_TIERS } from './PricingSection';
-import { useRouter } from 'next/navigation';
 
 interface RegistrationModalProps {
   isOpen: boolean;
@@ -14,14 +14,12 @@ interface RegistrationModalProps {
 }
 
 export default function RegistrationModal({ isOpen, onClose, defaultCategory = 'standard' }: RegistrationModalProps) {
-  const router = useRouter();
   const [category, setCategory] = useState<TicketCategory>(defaultCategory);
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('+243 ');
   const [email, setEmail] = useState('');
   const [company, setCompany] = useState('');
   const [jobTitle, setJobTitle] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('airtel');
   const [paymentReference, setPaymentReference] = useState('');
   const [photoPreview, setPhotoPreview] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -65,11 +63,10 @@ export default function RegistrationModal({ isOpen, onClose, defaultCategory = '
         jobTitle: jobTitle.trim() || undefined,
         category: category,
         price: currentTier.price,
-        paymentMethod: paymentMethod,
+        paymentMethod: 'airtel',
         paymentReference: paymentReference.trim() || undefined,
-        paymentStatus: paymentMethod === 'cash' ? 'cash_on_arrival' : 'pending',
+        paymentStatus: 'pending',
         photoUrl: photoPreview || '/images/avatars/user-01.jpg',
-        tableNumber: category === 'vip' ? 'Table Prestige (Mr Chey)' : 'Table Attribution Accueil',
       });
 
       setCreatedAttendee(newAttendee);
@@ -131,28 +128,28 @@ export default function RegistrationModal({ isOpen, onClose, defaultCategory = '
 
             <div className="space-y-2">
               <span className="text-[10px] uppercase font-bold tracking-[0.25em] text-[#eabe7c] block">
-                Félicitations {createdAttendee.fullName}
+                Demande enregistrée pour {createdAttendee.fullName}
               </span>
               <h3 className="font-serif text-3xl font-bold text-white">
-                Billet Généré avec Succès.
+                Votre préinscription est enregistrée.
               </h3>
               <p className="text-xs text-white/70 max-w-md mx-auto">
-                Votre billet d&apos;accès sécurisé <strong className="text-[#eabe7c] font-mono">{createdAttendee.qrToken}</strong> est prêt.
+                Le QR code sera débloqué sur votre page billet dès validation de votre paiement par l&apos;organisateur.
               </p>
             </div>
 
             <div className="p-4 bg-[#1c1d1e] border border-white/10 rounded text-left space-y-2 text-xs">
               <div className="flex justify-between">
                 <span className="text-white/50">Formule choisie :</span>
-                <span className="font-semibold text-[#eabe7c] capitalize">{createdAttendee.category === 'vip' ? 'Pass VIP ($50)' : 'Pass Standard ($30)'}</span>
+                <span className="font-semibold text-[#eabe7c] capitalize">{createdAttendee.category === 'vip' ? 'VIP (50 USD)' : 'Standard (30 USD)'}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-white/50">Mode de paiement :</span>
-                <span className="font-semibold uppercase text-white/80">{createdAttendee.paymentMethod}</span>
+                <span className="font-semibold uppercase text-white/80">Airtel Money</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-white/50">Statut :</span>
-                <span className="font-semibold text-amber-400">En cours de validation</span>
+                <span className="font-semibold text-amber-400">Paiement à vérifier</span>
               </div>
             </div>
 
@@ -162,12 +159,12 @@ export default function RegistrationModal({ isOpen, onClose, defaultCategory = '
                 onClick={handleGoToTicket}
                 className="w-full luther-btn luther-btn-primary flex items-center justify-center gap-2 cursor-pointer"
               >
-                <span>Accéder à mon Billet Officiel</span>
+                <span>Suivre ma réservation</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
 
               <p className="text-[11px] text-white/40">
-                Vous pourrez également retrouver votre billet à tout moment via le bouton &ldquo;Mon Billet&rdquo; en haut de page.
+                Sur cette page, confirmez votre paiement sur WhatsApp et joignez la capture de la transaction. Le QR code apparaît après vérification.
               </p>
             </div>
           </div>
@@ -182,7 +179,7 @@ export default function RegistrationModal({ isOpen, onClose, defaultCategory = '
                 Réservez Votre Place.
               </h2>
               <p className="text-xs text-white/60 mt-1">
-                Le Dîner des Entrepreneurs • Samedi 21 Novembre 2026 à Lubumbashi
+                Le Dîner des Entrepreneurs • Samedi 21 novembre 2026 • Big Five, Lubumbashi
               </p>
             </div>
 
@@ -221,7 +218,7 @@ export default function RegistrationModal({ isOpen, onClose, defaultCategory = '
             {/* Photo Upload */}
             <div className="space-y-2">
               <label className="block text-[10px] uppercase font-bold tracking-[0.2em] text-[#eabe7c]">
-                2. Photo pour l&apos;accueil & badge (Optionnel)
+                2. Photo de profil (facultatif)
               </label>
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 rounded overflow-hidden bg-black/40 border border-white/20 shrink-0 flex items-center justify-center">
@@ -246,7 +243,7 @@ export default function RegistrationModal({ isOpen, onClose, defaultCategory = '
                     <Upload className="w-3.5 h-3.5 text-[#eabe7c]" />
                     <span>{photoPreview ? 'Modifier ma photo' : 'Importer ma photo'}</span>
                   </label>
-                  <p className="text-[10px] text-white/40 mt-1">Affichée sur l&apos;écran lors du scan d&apos;accueil.</p>
+                  <p className="text-[10px] text-white/40 mt-1">Ajoutez une photo à votre dossier si vous le souhaitez.</p>
                 </div>
               </div>
             </div>
@@ -308,40 +305,19 @@ export default function RegistrationModal({ isOpen, onClose, defaultCategory = '
             {/* Payment method */}
             <div className="space-y-3">
               <label className="block text-[10px] uppercase font-bold tracking-[0.2em] text-[#eabe7c]">
-                4. Mode de Règlement ({currentTier.price} USD)
+                4. Paiement ({currentTier.price} USD)
               </label>
-
-              <div className="grid grid-cols-2 gap-2 text-center text-xs">
-                {[
-                  { id: 'airtel', label: 'Airtel Money' },
-                  { id: 'cash', label: 'Paiement en présentiel' },
-                ].map((m) => (
-                  <button
-                    key={m.id}
-                    type="button"
-                    onClick={() => setPaymentMethod(m.id as PaymentMethod)}
-                    className={`p-2.5 rounded font-semibold border transition-all ${
-                      paymentMethod === m.id
-                        ? 'border-[#eabe7c] bg-[#1c1d1e] text-[#eabe7c]'
-                        : 'border-white/10 bg-[#101112] text-white/60'
-                    }`}
-                  >
-                    {m.label}
-                  </button>
-                ))}
-              </div>
 
               <div className="p-3.5 bg-[#101112] border border-white/10 rounded text-xs space-y-1">
                 <p className="registration-payment-instructions text-white/90">
-                  {paymentMethod === 'airtel' && 'Transférez au numéro Airtel Money officiel : +243 997 173 630.'}
-                  {paymentMethod === 'cash' && 'Règlement en présentiel auprès du secrétariat.'}
+                  Effectuez le paiement Airtel Money au {WHATSAPP_CONTACT_DISPLAY}, puis indiquez la référence de transaction ci-dessous. Après votre préinscription, envoyez la capture de paiement à ce même numéro sur WhatsApp.
                 </p>
                 <div className="pt-2">
                   <input
                     type="text"
                     value={paymentReference}
                     onChange={(e) => setPaymentReference(e.target.value)}
-                    placeholder="Référence de transaction (Optionnel)"
+                    placeholder="Référence de transaction (facultatif)"
                     className="w-full px-3 py-1.5 rounded bg-[#141516] border border-white/10 text-xs text-white focus:border-[#eabe7c] focus:outline-none"
                   />
                 </div>
@@ -354,7 +330,7 @@ export default function RegistrationModal({ isOpen, onClose, defaultCategory = '
               className="w-full luther-btn luther-btn-primary flex items-center justify-center gap-2"
             >
               <ShieldCheck className="w-4 h-4" />
-              <span>{isSubmitting ? 'Génération du billet...' : `Confirmer ma réservation (${currentTier.price} $)`}</span>
+              <span>{isSubmitting ? 'Enregistrement...' : `Créer ma préinscription (${currentTier.price} USD)`}</span>
             </button>
           </form>
         )}

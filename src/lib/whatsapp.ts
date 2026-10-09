@@ -1,4 +1,5 @@
-export const WHATSAPP_CONTACT_NUMBER = '243997173630';
+export const WHATSAPP_CONTACT_DISPLAY = '+243 997 173 630';
+export const WHATSAPP_CONTACT_NUMBER = WHATSAPP_CONTACT_DISPLAY.replace(/\D/g, '');
 
 function normalizeWhatsAppPhone(phone: string): string {
   const digits = phone.replace(/\D/g, '');

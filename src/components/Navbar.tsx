@@ -47,10 +47,10 @@ export default function Navbar({ onOpenRegister, theme = 'light', onToggleTheme 
       <div className="max-w-7xl mx-auto px-6 sm:px-10 flex items-center justify-between">
         
         {/* Brand */}
-        <Link href="/" className="flex items-center gap-2 group" aria-label="Mr Chey - Accueil">
+        <Link href="/" className="flex items-center gap-2 group" aria-label="Monsieur Chey - Accueil">
           <Image
             src="/logo.png"
-            alt="Logo Mr Chey"
+            alt="Logo Monsieur Chey"
             width={96}
             height={96}
             className="brand-logo h-14 w-14 object-contain sm:h-16 sm:w-16"

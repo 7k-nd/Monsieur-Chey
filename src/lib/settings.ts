@@ -8,12 +8,7 @@ export interface Partner {
 }
 
 export const DEFAULT_PARTNERS: Partner[] = [
-  { id: '1', name: 'Katanga Mining Hub', category: 'Partenaire Platine' },
-  { id: '2', name: 'Copperbelt Invest', category: 'Partenaire Or' },
-  { id: '3', name: 'Lubumbashi Tech', category: 'Partenaire Innovation' },
-  { id: '4', name: 'Rawbank Prestige', category: 'Partenaire Bancaire' },
-  { id: '5', name: 'Vodacom Business', category: 'Partenaire Télécom' },
-  { id: '6', name: 'Chambre de Commerce', category: 'Partenaire Institutionnel' },
+  // Partners are added only after their participation is confirmed.
 ];
 
 export const DEFAULT_MR_CHEY_PHOTO = '/images/monsieur chey.jpg';

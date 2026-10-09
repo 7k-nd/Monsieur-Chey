@@ -4,7 +4,7 @@ import React from 'react';
 import { createWhatsAppUrl, WHATSAPP_CONTACT_NUMBER } from '@/lib/whatsapp';
 
 export default function FloatingWhatsApp() {
-  const defaultMessage = "Bonjour Mr Chey, je vous contacte au sujet du Dîner des Entrepreneurs à Lubumbashi.";
+  const defaultMessage = "Bonjour Monsieur Chey, je vous contacte au sujet du Dîner des Entrepreneurs à Lubumbashi.";
   const whatsappUrl = createWhatsAppUrl(defaultMessage, WHATSAPP_CONTACT_NUMBER);
 
   return (
@@ -14,7 +14,7 @@ export default function FloatingWhatsApp() {
         target="_blank"
         rel="noopener noreferrer"
         className="flex items-center gap-2.5 px-4 py-3 bg-[#25D366] hover:bg-[#20bd5a] text-white font-semibold text-xs uppercase tracking-wider rounded-full shadow-2xl transition-all duration-300 transform hover:scale-105 active:scale-95"
-        title="Contacter Mr Chey sur WhatsApp"
+        title="Contacter Monsieur Chey sur WhatsApp"
       >
         <div className="relative">
           {/* Official WhatsApp SVG icon */}
@@ -30,7 +30,7 @@ export default function FloatingWhatsApp() {
           <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-white rounded-full" />
         </div>
         <span className="hidden sm:inline-block font-sans font-bold text-[11px] tracking-[0.1em]">
-          Contacter Mr Chey
+          Contacter Monsieur Chey
         </span>
       </a>
     </aside>

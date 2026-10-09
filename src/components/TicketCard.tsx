@@ -51,24 +51,26 @@ export default function TicketCard({ attendee }: TicketCardProps) {
   const handleWhatsAppShare = () => {
     const ticketUrl = `${window.location.origin}/billet/${attendee.qrToken}`;
     const message =
-      `Voici mon billet pour Le Dîner des Entrepreneurs, organisé par Mr Chey.\n\n` +
-      `Nom : ${attendee.fullName}\nPass : ${attendee.category.toUpperCase()}\n` +
+      `Voici mon billet pour Le Dîner des Entrepreneurs, organisé par Monsieur Chey.\n\n` +
+      `Nom : ${attendee.fullName}\nPass : ${attendee.category.toUpperCase()} (${attendee.price} USD)\n` +
       `Table : ${attendee.tableNumber || "À l'accueil"}\nBillet : ${ticketUrl}`;
     openWhatsApp(message);
   };
 
   const handleWhatsAppValidation = () => {
-    const ref = attendee.paymentReference || attendee.qrToken;
+    const paymentReference = attendee.paymentReference
+      ? `Référence de paiement : ${attendee.paymentReference}`
+      : 'Référence de paiement : à préciser';
     const message =
-      `Bonjour Mr Chey & Organisation,\nJe me suis pré-enregistré pour Le Dîner des Entrepreneurs.\n` +
+      `Bonjour Monsieur Chey et l’organisation,\nJe me suis pré-inscrit au Dîner des Entrepreneurs.\n` +
       `Nom : ${attendee.fullName}\nPass : ${attendee.category.toUpperCase()} ($${attendee.price})\n` +
-      `Référence de paiement : ${ref}\nMerci de valider mon accès.`;
+      `${paymentReference}\nJe joins la capture de ma transaction. Merci de vérifier mon paiement et ma réservation.`;
     openWhatsApp(message, WHATSAPP_CONTACT_NUMBER);
   };
 
   const getPrice = (category: string) => {
-    if (category?.toLowerCase().includes('vip')) return '$50';
-    return '$30';
+    if (category?.toLowerCase().includes('vip')) return '50 USD';
+    return '30 USD';
   };
 
   return (
@@ -84,7 +86,7 @@ export default function TicketCard({ attendee }: TicketCardProps) {
         <div className="p-6 text-center border-b border-white/10 bg-[#1c1d1e]/50">
           <Image
             src="/logo.png"
-            alt="Logo Mr Chey"
+            alt="Logo Monsieur Chey"
             width={96}
             height={96}
             className="h-16 w-16 object-contain mx-auto mb-1"
@@ -147,7 +149,7 @@ export default function TicketCard({ attendee }: TicketCardProps) {
                   QR Code d&apos;Accès Verrouillé
                 </h4>
                 <p className="text-xs text-white/70 mt-1.5 leading-relaxed">
-                  Votre pré-enregistrement a bien été enregistré. Votre QR code officiel sera débloqué ici dès que l&apos;organisateur valide la réception de votre paiement.
+                  Votre préinscription a bien été enregistrée. Envoyez la capture de votre transaction au numéro WhatsApp de l&apos;organisateur. Le QR code sera débloqué ici après vérification et validation du paiement.
                 </p>
               </div>
 

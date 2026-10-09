@@ -1,29 +1,26 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ChevronDown, HelpCircle } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
+import { WHATSAPP_CONTACT_DISPLAY } from '@/lib/whatsapp';
 
 export default function FaqSection() {
   const faqs = [
     {
-      q: 'Comment s\u2019effectue le paiement de mon billet ?',
-      a: 'Vous pouvez régler par Airtel Money au numéro officiel indiqué lors de l’inscription, ou payer en présentiel auprès du secrétariat. Après vérification de votre paiement par l’équipe, votre billet QR officiel sera validé.',
+      q: 'Comment réserver ma place ?',
+      a: `Choisissez votre formule et remplissez le formulaire. Réglez ensuite le montant correspondant par Airtel Money au ${WHATSAPP_CONTACT_DISPLAY}. Depuis votre page billet, envoyez la capture de la transaction au même numéro WhatsApp. Votre place est confirmée après vérification du paiement.`,
     },
     {
-      q: 'Comment récupérer mon billet une fois inscrit ?',
-      a: 'Dès votre formulaire soumis, vous accédez à votre page privée avec votre billet QR unique. Vous pouvez le télécharger au format image haute définition, le recevoir par WhatsApp ou le retrouver à tout moment sur ce site en entrant simplement votre numéro de téléphone.',
+      q: 'Quand recevrai-je mon QR code ?',
+      a: 'Après votre inscription, vous accédez à votre page billet. Le QR code est débloqué sur cette page dès que l’organisateur a vérifié et validé votre paiement. Vous pouvez retrouver votre billet sur le site avec votre numéro de téléphone.',
     },
     {
       q: 'Que se passe-t-il à l\u2019entrée le jour de l\u2019événement ?',
-      a: 'L\u2019équipe d\u2019accueil scanne votre QR code en une fraction de seconde grâce à l\u2019application dédiée. Votre photo, votre nom et votre numéro de table s\u2019affichent instantanément à l\u2019écran pour vous orienter sans aucune file d\u2019attente.',
+      a: 'À l’accueil, présentez le QR code de votre billet confirmé pour le contrôle d’accès.',
     },
     {
-      q: 'Puis-je inscrire un collaborateur ou une délégation d\u2019entreprise ?',
-      a: 'Oui, vous pouvez opter pour la formule « Table Entreprise (5 places) » ou inscrire individuellement vos collaborateurs. L\u2019administration peut également importer ou assigner des tables groupées.',
-    },
-    {
-      q: 'Que faire si je n\u2019ai pas de connexion internet le jour J ?',
-      a: 'Vous pouvez enregistrer la capture d\u2019écran de votre billet QR sur votre téléphone ou l\u2019imprimer. De plus, notre système de scan à l\u2019entrée fonctionne parfaitement hors ligne.',
+      q: 'Quel est le dress code ?',
+      a: 'La tenue demandée est élégante et classique.',
     },
   ];
 
@@ -46,7 +43,7 @@ export default function FaqSection() {
             Tout ce que Vous Devez Savoir.
           </h2>
           <p className="text-base text-white/70 font-light">
-            Une organisation fluide et transparente pensée pour les professionnels exigeants.
+            Les informations pratiques sur votre réservation et votre venue.
           </p>
         </div>
 
