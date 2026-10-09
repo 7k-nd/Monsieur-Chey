@@ -48,16 +48,14 @@ export default function Navbar({ onOpenRegister, theme = 'light', onToggleTheme 
         
         {/* Brand */}
         <Link href="/" className="flex items-center gap-2 group" aria-label="Monsieur Chey - Accueil">
-          <span className="brand-logo-frame flex h-20 w-20 shrink-0 items-center justify-center rounded-full border border-[#eabe7c]/45 bg-black/55 shadow-[0_0_24px_rgba(234,190,124,0.2)] backdrop-blur-sm sm:h-24 sm:w-24">
-            <Image
-              src="/logo.png"
-              alt="Logo Monsieur Chey"
-              width={96}
-              height={96}
-              className="brand-logo h-full w-full object-contain p-1.5 drop-shadow-[0_0_8px_rgba(255,255,255,0.85)]"
-              priority
-            />
-          </span>
+          <Image
+            src="/logo.png"
+            alt="Logo Monsieur Chey"
+            width={160}
+            height={160}
+            className="brand-logo h-28 w-28 shrink-0 object-contain drop-shadow-[0_0_10px_rgba(255,255,255,0.9)] sm:h-36 sm:w-36"
+            priority
+          />
           <span className="hidden sm:inline-block text-[9px] uppercase tracking-[0.25em] text-white/50 font-medium">
             Dîner des Entrepreneurs
           </span>
